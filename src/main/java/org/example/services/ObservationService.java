@@ -16,7 +16,7 @@ public class ObservationService {
     }
 
     public Observation save (Observation observation){
-        return ObservationDAO.save(observation);
+        return observationDAO.save(observation);
     }
 
 

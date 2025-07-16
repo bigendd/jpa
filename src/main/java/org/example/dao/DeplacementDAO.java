@@ -1,68 +1,28 @@
 package org.example.dao;
 
-import org.example.db.Db;
+import org.example.Generic.GenericDAO;
 import org.example.entity.Deplacement;
 
-import javax.persistence.EntityManager;
-import java.util.List;
+public class DeplacementDAO extends GenericDAO<Deplacement> {
 
-
-public class DeplacementDAO {
-
-    private EntityManager entityManager;
-
-    public DeplacementDAO(){
-        this.entityManager = Db.getEntityManager();
+    public DeplacementDAO() {
+        super(Deplacement.class);
     }
 
-    public Deplacement save(Deplacement deplacement){
+    public Deplacement update(Deplacement updated, long id) {
         try {
-            entityManager.getTransaction().begin();
-            entityManager.persist(deplacement);
-            entityManager.getTransaction().commit();
-            return deplacement;
-        }catch (Exception e){
-            entityManager.getTransaction().rollback();
-            return null;
-        }
-    }
-
-    public Deplacement get(long id){
-        return entityManager.find(Deplacement.class, id);
-    }
-
-    public List<Deplacement> get(){
-        return entityManager.createQuery("SELECT d FROM Deplacement d", Deplacement.class).getResultList();
-
-    }
-
-    public Deplacement update(Deplacement deplacement, long id){
-        try {
-            Deplacement deplacementFound =  get(id);
-            if( deplacementFound != null){
+            Deplacement existing = get(id);
+            if (existing != null) {
                 entityManager.getTransaction().begin();
-                deplacementFound.setDistanceKm(deplacement.getDistanceKm());
-                deplacementFound.setMode(deplacement.getMode());
+                existing.setDistanceKm(updated.getDistanceKm());
+                existing.setMode(updated.getMode());
                 entityManager.getTransaction().commit();
+                return existing;
             }
-            return deplacement;
-        }catch (Exception e){
+        } catch (Exception e) {
             entityManager.getTransaction().rollback();
-            return null;
+            e.printStackTrace();
         }
-    }
-
-    public boolean delete(long id){
-        try {
-            Deplacement deplacementFound =  get(id);
-            if( deplacementFound != null){
-                entityManager.getTransaction().begin();
-                entityManager.remove(deplacementFound);
-                entityManager.getTransaction().commit();
-            }
-        }catch (Exception e){
-            entityManager.getTransaction().rollback();
-        }
-        return false;
+        return null;
     }
 }

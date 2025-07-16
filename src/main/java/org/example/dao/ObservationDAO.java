@@ -1,80 +1,33 @@
 package org.example.dao;
 
-import org.example.db.Db;
-import org.example.entity.Deplacement;
+import org.example.Generic.GenericDAO;
 import org.example.entity.Observation;
 
+public class ObservationDAO extends GenericDAO<Observation> {
 
-import javax.persistence.EntityManager;
-import java.util.List;
-
-public class ObservationDAO {
-
-    private static EntityManager entityManager;
-
-    public ObservationDAO(){
-        this.entityManager = Db.getEntityManager();
+    public ObservationDAO() {
+        super(Observation.class);
     }
 
-    public static Observation save(Observation observation){
+    public Observation update(Observation updated, long id) {
         try {
-            entityManager.getTransaction().begin();
-            entityManager.persist(observation);
-            entityManager.getTransaction().commit();
-            return observation;
-        }catch (Exception e){
-            entityManager.getTransaction().rollback();
-            return null;
-        }
-    }
-
-    public Observation get(long id){
-        return entityManager.find(Observation.class, id);
-    }
-
-    public List<Observation> get(){
-        return entityManager.createQuery("SELECT o FROM Observation d", Observation.class).getResultList();
-
-    }
-
-    public Observation update(Observation observation, long id){
-        try {
-            Observation observationFound =  get(id);
-            if( observationFound != null){
+            Observation existing = get(id);
+            if (existing != null) {
                 entityManager.getTransaction().begin();
-                observationFound.setComment(observation.getComment());
-                observationFound.setLocation(observation.getLocation());
-                observationFound.setLatitude(observation.getLatitude());
-                observationFound.setLongitude(observation.getLongitude());
-                observationFound.setObserverName(observation.getObserverName());
-                observationFound.setSpecie(observation.getSpecie());
-                observationFound.setObservationDate(observation.getObservationDate());
-
+                existing.setComment(updated.getComment());
+                existing.setLocation(updated.getLocation());
+                existing.setLatitude(updated.getLatitude());
+                existing.setLongitude(updated.getLongitude());
+                existing.setObserverName(updated.getObserverName());
+                existing.setSpecie(updated.getSpecie());
+                existing.setObservationDate(updated.getObservationDate());
                 entityManager.getTransaction().commit();
+                return existing;
             }
-            return observation;
-        }catch (Exception e){
+        } catch (Exception e) {
             entityManager.getTransaction().rollback();
-            return null;
+            e.printStackTrace();
         }
-    }
-
-    public boolean delete(long id){
-        try {
-            Observation observationFound =  get(id);
-            if( observationFound != null){
-                entityManager.getTransaction().begin();
-                entityManager.remove(observationFound);
-                entityManager.getTransaction().commit();
-            }
-            return false;
-
-
-        }catch (Exception e){
-            entityManager.getTransaction().rollback();
-            return false;
-
-        }
-
+        return null;
     }
 }

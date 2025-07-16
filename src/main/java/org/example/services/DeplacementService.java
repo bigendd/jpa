@@ -25,7 +25,7 @@ public class DeplacementService {
         return deplacementDAO.get(id);
     }
 
-    public List<Deplacement> getAll (){
+    public List<Deplacement> get (){
         return deplacementDAO.get();
     }
 
